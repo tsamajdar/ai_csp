@@ -165,7 +165,9 @@ st.info(
 )
 
 # Smart Add Lesson Form
-with st.expander("➕ Add Lesson (Using Existing or New Subjects/Teachers)", expanded=True):
+with st.expander(
+    "➕ Add Lesson (Using Existing or New Subjects/Teachers)", expanded=True
+):
   with st.form("add_custom_lesson"):
     c1, c2 = st.columns(2)
     with c1:
@@ -186,7 +188,6 @@ with st.expander("➕ Add Lesson (Using Existing or New Subjects/Teachers)", exp
 
     c3, c4 = st.columns(2)
     with c3:
-      # Subject Selection (Existing + Add New Option)
       subject_options = existing_subjects + ["+ Add New Subject..."]
       selected_subject = st.selectbox("Select Subject", subject_options)
       if selected_subject == "+ Add New Subject...":
@@ -195,7 +196,6 @@ with st.expander("➕ Add Lesson (Using Existing or New Subjects/Teachers)", exp
         new_subject_input = ""
 
     with c4:
-      # Teacher Selection (Existing + Add New Option)
       teacher_options = existing_teachers + ["+ Add New Teacher..."]
       selected_teacher = st.selectbox("Select Teacher", teacher_options)
       if selected_teacher == "+ Add New Teacher...":
@@ -276,13 +276,11 @@ if run_button:
           cls = lesson["class"]
           sec = lesson["section"]
 
-          # Check teacher double-booking
           t_key = (teacher, slot)
           teacher_schedule[t_key] = teacher_schedule.get(t_key, 0) + 1
           if teacher_schedule[t_key] > 1:
             conflicts += 20
 
-          # Check class section double-booking
           sec_key = (cls, sec, slot)
           section_schedule[sec_key] = section_schedule.get(sec_key, 0) + 1
           if section_schedule[sec_key] > 1:
