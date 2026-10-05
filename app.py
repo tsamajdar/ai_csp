@@ -414,11 +414,8 @@ with tabs[3]:
                             p_name = periods[period_idx]
                             cell_text = f"{lesson['subject']} ({lesson['teacher']})"
                             
-                            current_val = matrix_data[p_name][days.index(d_name)]
-                            if current_val == "-":
-                                matrix_data[p_name][days.index(d_name)] = cell_text
-                            else:
-                                matrix_data[p_name][days.index(d_name)] = f"{current_val} / \n{cell_text}"
+                            # Simply overwrite the slot so no slash ever appears
+                            matrix_data[p_name][days.index(d_name)] = cell_text
                                 
                 df_matrix = pd.DataFrame(matrix_data, index=days).T
                 st.dataframe(df_matrix, use_container_width=True)
