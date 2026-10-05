@@ -1,6 +1,6 @@
 import random
 import sqlite3
-from deap import base, creator, tools
+from deap import algorithms, base, creator, tools
 import matplotlib
 matplotlib.use('Agg')  # Headless backend for cloud compatibility
 import matplotlib.pyplot as plt
@@ -88,7 +88,6 @@ def init_db():
             for sec in sections:
                 cursor.execute("SELECT teacher_name, subject FROM faculty")
                 fac_list = cursor.fetchall()
-                # Assign a few sample lessons per section from the faculty pool
                 for teacher, subj in fac_list[:6]:  # Pick subset for default template
                     default_lessons.append((cls, sec, subj, teacher))
                     
@@ -257,11 +256,9 @@ with tabs[1]:
             sec_in = st.selectbox("Section", ["A", "B", "C", "D"])
             
         if not df_faculty.empty:
-            # Format faculty choices as "Teacher Name (Subject)"
             faculty_options = [f"{row['teacher_name']} ({row['subject']})" for _, row in df_faculty.iterrows()]
             selected_fac_comb = st.selectbox("Select Faculty & Subject", faculty_options)
             
-            # Parse back teacher and subject
             selected_teacher = selected_fac_comb.split(" (")[0]
             selected_subject = selected_fac_comb.split(" (")[1].rstrip(")")
         else:
@@ -346,7 +343,7 @@ with tabs[2]:
                     else:
                         teacher_slots[key_teacher] = True
                         
-                return (conflicts,),
+                return (conflicts,)  # Tuple format required by DEAP
             
             toolbox.register("evaluate", eval_timetable)
             toolbox.register("mate", tools.cxTwoPoint)
@@ -359,7 +356,7 @@ with tabs[2]:
             stats.register("min", min)
             
             with st.spinner("Running Genetic Algorithm optimization..."):
-                pop, logbook = tools.eaSimple(pop, toolbox, cxpb=0.7, mutpb=mutation_prob, ngen=generations, stats=stats, halloffame=hof, verbose=False)
+                pop, logbook = algorithms.eaSimple(pop, toolbox, cxpb=0.7, mutpb=mutation_prob, ngen=generations, stats=stats, halloffame=hof, verbose=False)
                 
             best_ind = hof[0]
             best_conflicts = best_ind.fitness.values[0]
